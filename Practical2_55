@@ -1,0 +1,15 @@
+# MODEL BASED AGENT
+AIDS_Lab_05 = input("Is Lab 5 clean? (yes/no): ").lower()
+AIDS_Lab_06 = input("Is Lab 6 clean? (yes/no): ").lower()
+
+if AIDS_Lab_05 == "yes" and AIDS_Lab_06 == "no":
+    print("Clean AIDS Lab 6")
+
+elif AIDS_Lab_05 == "no" and AIDS_Lab_06 == "yes":
+    print("Clean AIDS Lab 5")
+
+elif AIDS_Lab_05 == "no" and AIDS_Lab_06 == "no":
+    print("Clean both labs")
+
+else:
+    print("Both labs are clean and ready to use")
