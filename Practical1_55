@@ -1,0 +1,25 @@
+# SMART LIGHT AGENT
+
+is_day_light_present=input("Is these is sunlight").upper()
+
+is_human_precence=input("is someone present there").upper()
+
+if is_day_light_present=='YES' and is_human_precence=="YES":
+
+     print("LIGHT WILL BE ON") 
+
+ else:
+
+     print("NO LIGHT")
+
+
+is_vehicle_there=input("have you enterned with vehicle") 
+
+if_gate_close=input("is gate close ")
+
+if is_vehicle_there=="1" and if_gate_close=="1":
+
+    print("open gate") 
+
+else:
+    print("close gate")
