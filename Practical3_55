@@ -1,0 +1,66 @@
+import collections
+
+grid = [
+    ['S', '.', '.', '.', '.'],
+    ['.', 'X', 'X', '.', '.'],
+    ['.', '.', '.', 'X', '.'],
+    ['.', 'X', '.', '.', 'G']
+]
+
+rows = len(grid)
+cols = len(grid[0])
+
+start = None
+goal = None
+for r in range(rows):
+    for c in range(cols):
+        if grid[r][c] == 'S':
+            start = (r, c)
+        elif grid[r][c] == 'G':
+            goal = (r, c)
+
+def manhattan_distance(p1, p2):
+    return abs(p1[0] - p2[0]) + abs(p1[1] - p2[1])
+
+def greedy_best_first_search(start, goal, grid):
+    open_list = collections.deque([(manhattan_distance(start, goal), start)])
+    came_from = {start: None}
+    visited = {start}
+    while open_list:
+        open_list = collections.deque(sorted(list(open_list), key=lambda x: x[0]))
+        _, current_node = open_list.popleft()
+        if current_node == goal:
+            path = []
+            while current_node is not None:
+                path.append(current_node)
+                current_node = came_from[current_node]
+            return path[::-1]
+        r, c = current_node
+        moves = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        for dr, dc in moves:
+            next_r, next_c = r + dr, c + dc
+            next_node = (next_r, next_c)
+            if 0 <= next_r < rows and 0 <= next_c < cols:
+                if grid[next_r][next_c] != 'X' and next_node not in visited:
+                    heuristic_val = manhattan_distance(next_node, goal)
+                    open_list.append((heuristic_val, next_node))
+                    visited.add(next_node)
+                    came_from[next_node] = current_node
+    return None
+
+shortest_path = greedy_best_first_search(start, goal, grid)
+
+if shortest_path:
+    print("Path found:")
+    for step in shortest_path:
+        print(f"-> {step}", end=" ")
+    print(f"\nTotal steps: {len(shortest_path) - 1}")
+    path_grid = [row[:] for row in grid]
+    for r, c in shortest_path:
+        if (r, c) != start and (r, c) != goal:
+            path_grid[r][c] = '*'
+    print("\nVisualized path:")
+    for row in path_grid:
+        print(' '.join(row))
+else:
+    print("No path found.")
