@@ -1,0 +1,83 @@
+import heapq
+
+def manhattan_distance(start, goal):
+    """Heuristic function: Manhattan distance between two points."""
+    return abs(start[0] - goal[0]) + abs(start[1] - goal[1])
+
+def a_star_search(grid, start, goal):
+    """A* Search to find the optimal (lowest cost) path in a weighted grid."""
+    rows, cols = len(grid), len(grid[0])
+    visited = set()
+    priority_queue = []
+
+    heapq.heappush(priority_queue, (0 + manhattan_distance(start, goal), 0, start[0], start[1], start))
+    came_from = {start: None}
+    cost_so_far = {start: 0}
+
+    while priority_queue:
+        f, g, _, _, current = heapq.heappop(priority_queue)
+        if current == goal:
+            break
+        if current in visited:
+            continue
+        visited.add(current)
+
+        x, y = current
+        for dx, dy in [(-1,0), (1,0), (0,-1), (0,1)]:
+            nx, ny = x + dx, y + dy
+            neighbor = (nx, ny)
+            if 0 <= nx < rows and 0 <= ny < cols and grid[nx][ny] != 'X':
+                new_cost = cost_so_far[current] + grid[nx][ny]
+                if neighbor not in cost_so_far or new_cost < cost_so_far[neighbor]:
+                    cost_so_far[neighbor] = new_cost
+                    priority = new_cost + manhattan_distance(neighbor, goal)
+                    heapq.heappush(priority_queue, (priority, new_cost, nx, ny, neighbor))
+                    came_from[neighbor] = current
+
+    # Reconstruct path
+    path = []
+    current = goal
+    while current is not None:
+        path.append(current)
+        current = came_from.get(current)
+    path.reverse()
+    total_cost = cost_so_far.get(goal, float('inf'))
+
+    return path if path and path[0] == start else [], total_cost
+
+def print_grid_with_path(grid, path, start, goal):
+    grid_copy = [row[:] for row in grid]
+    for x, y in path:
+        if (x, y) != start and (x, y) != goal:
+            grid_copy[x][y] = '*'
+    grid_copy[start[0]][start[1]] = 'S'
+    grid_copy[goal[0]][goal[1]] = 'G'
+
+    for row in grid_copy:
+        print(' '.join(str(cell) for cell in row))
+    print()
+
+# Example Weighted Grid
+grid = [
+    [1, 1, 5],
+    [1, 'X', 1],
+    [1, 1, 1]
+]
+
+start = (0, 0)
+goal = (2, 2)
+
+path, total_cost = a_star_search(grid, start, goal)
+print("Path found by A* Search:")
+print(path)
+print(f"Total Path Cost: {total_cost}")
+
+print("\nGrid with path marked (*):")
+print_grid_with_path(grid, path, start, goal)
+
+if path:
+    print("Path verification:")
+    for i, (x, y) in enumerate(path):
+        print(f"Step {i}: ({x}, {y}) - Cost: {grid[x][y]}")
+else:
+    print("No path found!")
